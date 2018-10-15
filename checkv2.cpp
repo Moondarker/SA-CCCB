@@ -30,7 +30,7 @@ void ctrlCHandler(int s) {
 	s_interrupted = true; 
 };
 
-char* itoaa(unsigned long long value, char* result, int base, char* alphabet, int asize) {
+char* itoaa(unsigned long long value, int base, char* result, char* alphabet, int asize) {
 	// check that the base if valid
 	if (base < 2 || base > 36) { *result = '\0'; return result; } //Better change 36 to an actual size of alphabet
 
@@ -57,13 +57,14 @@ char* itoaa(unsigned long long value, char* result, int base, char* alphabet, in
 int main() 
 {
 	unsigned long needle = 0;
-	unsigned long long maxchar = 0;
 	unsigned long long startpos = 0;
+	unsigned long long lastpos = 0;
+	std::string prefix;
 	
 	char* alphabet = "WASDSAW"; //TODO: rewrite
 	int asize = 3;
 	
-	char buffer [30];
+	char buffer [50];
 	std::string input;
 	std::string tmp;
 	
@@ -101,17 +102,28 @@ int main()
 	std::getline(std::cin, input);
 	
 	if (atoi(input.c_str()) > 0) {
-		maxchar = std::pow(asize+1,atoi(input.c_str()));
-		std::cout << "* Max string length was set to " << atoi(input.c_str()) << ", last pos to check will be " << maxchar << "\n";
+		lastpos = std::pow(asize+1,atoi(input.c_str()));
+		std::cout << "* Max string length was set to " << atoi(input.c_str()) << ", last pos to check will be " << lastpos << "\n";
 	} else {
-		maxchar = std::pow(asize+1,14);
-		std::cout << "* Max string length was set to 14, last pos to check will be " << maxchar << "\n";
+		lastpos = std::pow(asize+1,14);
+		std::cout << "* Max string length was set to 14, last pos to check will be " << lastpos << "\n";
 	};
 	
-	if (maxchar == 0) {
+	if (lastpos == 0) {
 		std::cout << "ERROR: alphabet was too large, or you've tried to bruteforce too many characters. \n";
 		std::cout << "Please reduce number of chars in alphabet, or maximum string length. \n";
 		exit(0);
+	};
+	
+	std::cout << "Please enter expected cheat code prefix (default - [none]): \n";
+	std::getline(std::cin, input);
+	
+	if (input.length() > 0) {
+		prefix = input;
+		reverse (prefix.begin(), prefix.end());
+		std::cout << "* Using prefix: " << input << "\n";
+	} else {
+		std::cout << "* Using no prefix\n";
 	};
 	
 	std::cout << "Please enter a cheat code to bruteforce (default - all cheat codes): \n";
@@ -128,21 +140,29 @@ int main()
 		std::cout << "* Bruteforcing for all known cheat codes...\n";
 	};
 	
-	for (unsigned long long len = startpos; len <= maxchar; len++ ) {
-		itoaa (len,buffer,4,alphabet,asize); //transform number into string of symbols from alphabet
+	for (unsigned long long len = startpos; len <= lastpos; len++ ) {
+		//cout << "itoaa called\n" << len << 4 << alphabet << asize;
+		itoaa (len,(asize+1),buffer,alphabet,asize); //transform number into string of symbols from alphabet
+		std::string ccode(buffer);
 		
-		if (allCheats && (std::find(cheatHashes, cheatHashes+88, GTASA_CRC32_fromString(buffer)) != cheatHashes+88)) {
-			tresult = string(buffer);
-			reverse (tresult.begin(),tresult.end());
-			std::cout << "\r" << std::hex << std::uppercase << GTASA_CRC32_fromString(buffer) << " found - (" << tresult << ")\n"; //HASH found - (key combination)
-		} else if (GTASA_CRC32_fromString(buffer) == needle) {
-			tresult = string(buffer);
-			reverse (tresult.begin(),tresult.end());
-			std::cout << "\r" << std::hex << std::uppercase << GTASA_CRC32_fromString(buffer) << " found - (" << tresult << ")\n"; //HASH found - (key combination)
+		if (prefix.length() > 0) {
+			ccode.append(prefix);
 		};
-		if (((len % (maxchar / 100)) < 2) || s_interrupted) {
-			std::cout << "\r" << std::dec << (len / (maxchar / 100)) << "%, last pos: " << len; //x% (# of strings tested)
+		
+		if (allCheats && (std::find(cheatHashes, cheatHashes+88, GTASA_CRC32_fromString(ccode.c_str())) != cheatHashes+88)) {
+			tresult = ccode;
+			reverse (tresult.begin(),tresult.end());
+			std::cout << "\r" << std::hex << std::uppercase << GTASA_CRC32_fromString(ccode.c_str()) << " found - (" << tresult << ")\n"; //HASH found - (key combination)
+		} else if (GTASA_CRC32_fromString(ccode.c_str()) == needle) {
+			tresult = ccode;
+			reverse (tresult.begin(),tresult.end());
+			std::cout << "\r" << std::hex << std::uppercase << GTASA_CRC32_fromString(ccode.c_str()) << " found - (" << tresult << ")\n"; //HASH found - (key combination)
 		};
+		
+		if (((len % (lastpos / 100)) < 2) || s_interrupted) {
+			std::cout << "\r" << std::dec << (len / (lastpos / 100)) << "%, last pos: " << len; //x% (# of strings tested)
+		};
+		
 		if (s_interrupted) {
 			std::cout << "\n";
 			exit(0);
