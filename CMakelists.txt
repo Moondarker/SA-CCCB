@@ -7,5 +7,5 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /permissive")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /permissive")
 
 add_compile_options(/permissive)
-add_executable(Test checkv2.cpp)
+add_executable(Test checkv2.cpp GTASA_CRC32.cpp)
 set_property(TARGET Test PROPERTY CXX_STANDARD 20)
