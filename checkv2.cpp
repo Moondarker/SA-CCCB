@@ -1,10 +1,9 @@
 #include "GTASA_CRC32.cpp"
 #include <iostream>
+#include <string>
 #include <signal.h>
 #include <cmath>
 #include <algorithm>
-
-using namespace std;
 
 bool s_interrupted = false;
 unsigned long cheatHashes[] = { 0xDE4B237D, 0xB22A28D1, 0x5A783FAE, 0xEECCEA2B, 0x42AF1E28, 0x555FC201, 0x2A845345, 0xE1EF01EA, 
@@ -91,7 +90,7 @@ int main()
 		tmp = input;
 		reverse (tmp.begin(), tmp.end());
 		tmp.erase(0, 1);
-		asize = input.size()-1;
+		asize = (int) input.size()-1;
 		alphabet = (char *)input.append(tmp).c_str(); //TODO: rewrite
 		std::cout << "* Using alphabet: " << alphabet << " (" << asize + 1 << " chars)\n";
 	} else {
@@ -102,10 +101,10 @@ int main()
 	std::getline(std::cin, input);
 	
 	if (atoi(input.c_str()) > 0) {
-		lastpos = std::pow(asize+1,atoi(input.c_str()));
+		lastpos = (unsigned long long) std::pow(asize+1,atoi(input.c_str()));
 		std::cout << "* Max string length was set to " << atoi(input.c_str()) << ", last pos to check will be " << lastpos << "\n";
 	} else {
-		lastpos = std::pow(asize+1,14);
+		lastpos = (unsigned long long) std::pow(asize+1,14);
 		std::cout << "* Max string length was set to 14, last pos to check will be " << lastpos << "\n";
 	};
 	

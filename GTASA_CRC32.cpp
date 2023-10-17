@@ -77,7 +77,7 @@ const unsigned long GTASA_CRC32_table[256] = {
 
 unsigned long GTASA_CRC32(const char* string)
 {
-	register unsigned long reg = 0xFFFFFFFF;  // register for CRC
+	unsigned long reg = 0xFFFFFFFF;  // register for CRC
 
 	// CRC calculation
 	while(*string)
@@ -90,7 +90,7 @@ unsigned long GTASA_CRC32(const char* string)
 
 unsigned long GTASA_CRC32_fromString(const char* string)
 {
-	register unsigned long reg = 0xFFFFFFFF;  // register for CRC
+	unsigned long reg = 0xFFFFFFFF;  // register for CRC
 
 	// CRC calculation
 	while(*string)
@@ -103,7 +103,7 @@ unsigned long GTASA_CRC32_fromString(const char* string)
 
 unsigned long GTASA_CRC32_fromUpCaseString(const char* string)
 {
-	register unsigned long reg = 0xFFFFFFFF;  // register for CRC
+	unsigned long reg = 0xFFFFFFFF;  // register for CRC
 
 	// CRC calculation
 	while(*string)
@@ -116,7 +116,7 @@ unsigned long GTASA_CRC32_fromUpCaseString(const char* string)
 
 unsigned long GTASA_CRC32_fromBlock(const void* ptr, size_t len)
 {
-	register unsigned long reg = 0xFFFFFFFF;  // register for CRC
+	unsigned long reg = 0xFFFFFFFF;  // register for CRC
 
 	const char* data_end = (const char*)ptr + len;
 
